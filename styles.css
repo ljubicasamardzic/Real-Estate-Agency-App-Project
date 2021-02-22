@@ -1,17 +1,17 @@
-    .img-wrapper {
-    height: 100px;
-    position: relative;
-    float: left 
-  }
-  
-  .img-wrapper a {
-    position: absolute;
-    right: 0;
-    top:0;
-    display: none;
-    padding: 4%;
-  }
-  
-  .img-wrapper:hover a {
-    display: block;
-  }
+.img-wrapper {
+  height: 100px;
+  position: relative;
+  float: left 
+}
+
+.img-wrapper a {
+  position: absolute;
+  right: 0;
+  top:0;
+  display: none;
+  padding: 4%;
+}
+
+.img-wrapper:hover a {
+  display: block;
+}

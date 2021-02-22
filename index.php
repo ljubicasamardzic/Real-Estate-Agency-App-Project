@@ -86,6 +86,11 @@
     <!-- To be revised in a later version -->
     <br>
     <br>
+    <a href="new_realty.php">Add a New Realty</a>
+
+    <br>
+    <br>
+
     <a href="cities.php">Cities</a>
 </body>
 </html>

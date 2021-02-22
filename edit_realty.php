@@ -147,7 +147,7 @@
         <br>
 
         <label for="status">Status:</label>
-        <select name="status" onchange="addSaleDate(this);">
+        <select name="status" onchange="addSaleDate(this)">
             <?php 
                 $status = $realty['status'];
                 if ($status == 0) {
@@ -177,6 +177,12 @@
                 echo "<label for=\"date_of_sale\">Date of Sale:</label>";
                 echo "<input type=\"date\" name=\"date_of_sale\" value=$date>";
                 echo "</div>";
+            } 
+            else if ($realty['status'] == 0) {
+                echo "<div id=\"date_of_sale\" style=\"display: none;\">";
+                echo "<label for=\"date_of_sale\">Date of Sale:</label>";
+                echo "<input type=\"date\" name=\"date_of_sale\" value=$date>";
+                echo "</div>";
             }
         ?>
         
@@ -184,7 +190,7 @@
         <br>
         
         <label for="photo">Select Images to Add:</label>
-        <input type="file" name="photos[]" multiple >        
+        <input type="file" name="photos[]" multiple>        
 
         <br>
         <br>
@@ -196,17 +202,14 @@
             while ($photo = mysqli_fetch_assoc($res2)) {
                 $photo_name = $photo['name'];
                 $photo_id = $photo['id'];
-                // echo "<div class=\"container\">";
-                // echo "<img src=$photo_name height=100 width=150 id=$photo_id>";
-                // echo "<a href=\"delete_img.php?id=$photo_id\"><i class=\"fas fa-trash\"></a>";
-                // echo "</div>";
+                
                 echo "<div class=\"img-wrapper\">";
-                echo "<img src=$photo_name height=100 width=150>";
-                echo "<a href=\"delete_img.php?id=$photo_id&return=$id\" onClick=\"return confirm('Are you sure you want to delete?')\">";
-                  echo "<div>";
-                      echo "<i class=\"fas fa-trash\" aria-hidden=\"true\"></i>";
-                  echo "</div>";
-                echo "</a>";
+                    echo "<img src=$photo_name height=100 width=150>";
+                        echo "<a href=\"delete_img.php?id=$photo_id&return=$id\" onClick=\"return confirm('Are you sure you want to delete?')\">";
+                            echo "<div>";
+                                echo "<i class=\"fas fa-trash\"></i>";
+                            echo "</div>";
+                        echo "</a>";
                 echo "</div>";
             }
         ?>

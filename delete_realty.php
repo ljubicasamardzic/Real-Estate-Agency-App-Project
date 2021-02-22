@@ -1,19 +1,31 @@
 <?php
 
     include 'db.php';
+    include 'functions.php';
 
     isset($_GET['id']) && is_numeric($_GET['id']) ? $id = $_GET['id'] : exit("ID error");
+    
+    mysqli_query($db, "BEGIN");
 
-    $query = "DELETE FROM realties WHERE id = $id";
-    $res = mysqli_query($db, $query);
+    // delete related photos
+    $del_img = mysqli_query($db, "DELETE FROM photos WHERE realty_id = $id");
 
-    $query2 = "DELETE FROM photos WHERE realty.id = $id";
-    $res2 = mysqli_query($db, $res);
+    if ($del_img) {
 
-    if ($res && $res2) {
-        header("location: index.php?msg=realty_deleted");  
+        // if photos are deleted, delete the realty
+        $del_realty = mysqli_query($db, "DELETE FROM realties WHERE id = $id");
+
+        if ($del_realty) {
+            mysqli_query($db, "COMMIT");
+            redirect("index.php?msg=realty_deleted");  
+        } else {
+            mysqli_query($db, "ROLLBACK");
+            redirect("index.php?msg=realty_not_deleted");   
+        }
     } else {
-        header("location: index.php?msg=realty_not_deleted");   
+        mysqli_query($db, "ROLLBACK");
+        redirect("index.php?msg=realty_not_deleted");   
     }
+
 
 ?>
