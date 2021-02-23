@@ -11,7 +11,24 @@
         exit();
     }
 
+    function selectMenu($table, $id = null) {
+        global $db;
+        
+        $res = mysqli_query($db, "SELECT * FROM $table ORDER BY name");
 
-    // function validate($arr, $key, $required = false, $default = "", $url = "") {
-    //     isset($arr[$key]) && $arr[$key] != "" ? return $arr[$key] : redirect($url);
+        while($row = mysqli_fetch_assoc($res)) {
+            $id_temp = $row['id'];
+            $name_temp = $row['name'];
+
+            if ($id == $id_temp) {
+                    $selected = "selected";
+                } else {
+                    $selected = "";
+                }
+           
+            echo "<option value='$id_temp' $selected>$name_temp</option>";
+        }
+    }
+
+
 ?>

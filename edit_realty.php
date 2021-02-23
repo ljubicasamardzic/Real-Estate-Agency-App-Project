@@ -1,5 +1,6 @@
 <?php
     include 'db.php';
+    include 'functions.php';
 
     isset($_GET['id']) && is_numeric($_GET['id']) ? $id = $_GET['id'] : exit("Incorrect ID"); 
     $query = "SELECT realties.*,
@@ -55,20 +56,9 @@
         <select name="realty_type">
             <option value="">-- choose a realty type --</option>
             <?php 
-                $realty_types = mysqli_query($db, "SELECT * FROM realty_type ORDER BY name");
-                // currenty chosen realty 
                 $realty_type_id = $realty['realty_type_id'];
-                while($realty_type = mysqli_fetch_assoc($realty_types)) {
-                    $realty_type_id_temp = $realty_type['id'];
-                    $realty_type_name_temp = $realty_type['name'];
-                    if ($realty_type_id == $realty_type_id_temp) {
-                        $selected = "selected";
-                    } else {
-                        $selected = "";
-                    }
-                    echo "<option value='$realty_type_id_temp' $selected>$realty_type_name_temp</option>";
-                }
 
+                selectMenu("realty_type", $realty_type_id);
             ?>
             </option>
         </select>
@@ -80,20 +70,9 @@
         <select name="ad_type" id="">
             <option value="">-- choose the type of ad --</option>
             <?php
-                $ad_types = mysqli_query($db, "SELECT * FROM ad_type ORDER BY name");
-                // the id of the currently chosen ad type
                 $ad_type_id = $realty['ad_type_id'];
-                while ($ad_type = mysqli_fetch_assoc($ad_types)) {
-                    var_dump($ad_type);
-                    $ad_type_id_temp = $ad_type['id'];
-                    $ad_type_name_temp = $ad_type['name'];
-                    if ($ad_type_id == $ad_type_id_temp) {
-                        $selected = "selected";
-                    } else {
-                        $selected = "";
-                    }
-                    echo "<option value='$ad_type_id_temp' $selected>$ad_type_name_temp</option>";
-                }
+
+                selectMenu("ad_type", $ad_type_id);
             ?>
         </select>
 
@@ -104,18 +83,9 @@
         <select name="city_id" required>
             <option value="">-- choose a city --</option>
             <?php 
-                $cities = mysqli_query($db, "SELECT * from cities ORDER BY name"); 
-                // currenty chosen city 
                 $city_id = $realty['city_id'];
-                while ($city = mysqli_fetch_assoc($cities)) {
-                    $id_temp = $city['id'];
-                    $name_temp = $city['name'];
-                    $selected = "";
-                    if ($id_temp == $city_id) {
-                        $selected = "selected";
-                    }
-                    echo "<option value='$id_temp' $selected>$name_temp</option>";
-                }
+                
+                selectMenu("cities", $city_id);
             ?>
         </select>
 
@@ -150,6 +120,7 @@
         <select name="status" onchange="addSaleDate(this)">
             <?php 
                 $status = $realty['status'];
+
                 if ($status == 0) {
                     $selected = "selected";
                 } else {
@@ -172,18 +143,15 @@
         <?php
         
             $date = $realty['date_of_sale'];
-            if ($realty['status'] == 1) {
-                echo "<div id=\"date_of_sale\" style=\"display: block;\">";
-                echo "<label for=\"date_of_sale\">Date of Sale:</label>";
-                echo "<input type=\"date\" name=\"date_of_sale\" value=$date>";
-                echo "</div>";
-            } 
-            else if ($realty['status'] == 0) {
-                echo "<div id=\"date_of_sale\" style=\"display: none;\">";
-                echo "<label for=\"date_of_sale\">Date of Sale:</label>";
-                echo "<input type=\"date\" name=\"date_of_sale\" value=$date>";
-                echo "</div>";
-            }
+            $display;
+            
+            $status == 1 ? $display = "block" : $display = "none";
+
+            echo "<div id=\"date_of_sale\" style=\"display: <?=$display?>;\">";
+            echo "<label for=\"date_of_sale\">Date of Sale:</label>";
+            echo "<input type=\"date\" name=\"date_of_sale\" value=$date>";
+            echo "</div>";
+
         ?>
         
         <br>
@@ -198,6 +166,8 @@
             $query2 = "SELECT * FROM photos WHERE realty_id = $id";
             $res2 = mysqli_query($db, $query2);
 
+            echo "<input type=\"hidden\" name=\"del_photos[]\" id=\"hidden_img\">";
+
             // List out all the photos
             while ($photo = mysqli_fetch_assoc($res2)) {
                 $photo_name = $photo['name'];
@@ -205,9 +175,9 @@
                 
                 echo "<div class=\"img-wrapper\">";
                     echo "<img src=$photo_name height=100 width=150>";
-                        echo "<a href=\"delete_img.php?id=$photo_id&return=$id\" onClick=\"return confirm('Are you sure you want to delete?')\">";
+                        echo "<a>";
                             echo "<div>";
-                                echo "<i class=\"fas fa-trash\"></i>";
+                                echo "<i onClick=\"removePhotos($photo_id)\" class=\"fas fa-trash\"></i>";
                             echo "</div>";
                         echo "</a>";
                 echo "</div>";

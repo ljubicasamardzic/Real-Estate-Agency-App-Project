@@ -2,18 +2,52 @@
 
     include 'db.php';
 
-    $query = "SELECT realties.*, 
-                cities.name as city,
-                ad_type.name as ad_type, 
-                realty_type.name as realty_type
-                FROM realties 
-                JOIN cities on realties.city_id = cities.id 
-                JOIN ad_type on ad_type.id = realties.ad_type_id
-                JOIN realty_type on realties.realty_type_id = realty_type.id
-                WHERE realties.ad_type_id = ad_type.id 
-                AND realties.realty_type_id = realty_type.id";
-    $res = mysqli_query($db, $query);
+    // $search_arr = [];
+    // $search_arr[] = "1 = 1";
 
+    // if (isset($_GET['realty_type']) && $_GET['realty_type'] != ""){
+    //     $realty_type = strtolower($_GET['realty_type']);
+    //     $where_arr[] = "(contacts.first_name) LIKE '%$first_name%'";
+    // }  
+    // if (isset($_GET['last_name']) && $_GET['last_name'] != ""){
+    //     $last_name = strtolower($_GET['last_name']);
+    //     $where_arr[] = "lower(contacts.last_name) LIKE '%$last_name%'";
+    // }
+    // if (isset($_GET['phone1']) && $_GET['phone1'] != ""){
+    //     $phone1 = strtolower($_GET['phone1']);
+    //     $where_arr[] = "lower(contacts.phone1) LIKE '%$phone1%'";
+    // }  
+    // if (isset($_GET['phone2']) && $_GET['phone2'] != ""){
+    //     $phone2 = strtolower($_GET['phone2']);
+    //     $where_arr[] = "lower(contacts.phone2) LIKE '%$phone2%'";
+    // }
+    // if (isset($_GET['address']) && $_GET['address'] != ""){
+    //     $address = strtolower($_GET['address']);
+    //     $where_arr[] = "lower(contacts.address) LIKE '%$address%'";
+    // }
+    // if (isset($_GET['email']) && $_GET['email'] != ""){
+    //     $email = strtolower($_GET['email']);
+    //     $where_arr[] = "lower(contacts.email) LIKE '%$email%'";
+    // }
+
+    // $where_str = implode(" AND ", $where_arr);
+    // $sql = "SELECT contacts.*, cities.name as city_name FROM contacts LEFT JOIN cities on cities.id = contacts.city_id WHERE $where_str ORDER BY contacts.first_name ASC";
+
+    // $res = mysqli_query($dbconn, $sql);
+    // $cnt = mysqli_num_rows($res);
+
+
+    $query = "SELECT realties.*, 
+    cities.name as city,
+    ad_type.name as ad_type, 
+    realty_type.name as realty_type
+    FROM realties 
+    JOIN cities on realties.city_id = cities.id 
+    JOIN ad_type on ad_type.id = realties.ad_type_id
+    JOIN realty_type on realties.realty_type_id = realty_type.id
+    WHERE realties.ad_type_id = ad_type.id 
+    AND realties.realty_type_id = realty_type.id";
+    $res = mysqli_query($db, $query);
 ?>
 
 <!DOCTYPE html>
@@ -26,6 +60,22 @@
 </head>
 <body>
 
+    <!-- SEARCH -->
+    <form action="./index.php" method="GET">
+        <input type="text" name="realty_type" placeholder="Enter first name"> 
+        <input type="text" name="ad_type" placeholder="Enter last name"> 
+        <input type="text" name="city" placeholder="Enter phone 1"> 
+        <input type="text" name="min_size" placeholder="Enter phone 2">
+        <input type="text" name="max_size" placeholder="Enter phone 2"> 
+        <input type="text" name="construction_year" placeholder="Enter address"> 
+        <input type="text" name="status" placeholder="Enter email">
+        <button>Search</button>
+    </form>
+
+    <br>
+    <br>
+    
+    <!-- TABLE DATA -->
     <table border="1">
         <thead>
             <tr>
@@ -90,7 +140,10 @@
 
     <br>
     <br>
+    <a href="realty_types.php">Realty Types</a>
 
+    <br>
+    <br>
     <a href="cities.php">Cities</a>
 </body>
 </html>

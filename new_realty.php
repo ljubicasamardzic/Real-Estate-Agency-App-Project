@@ -1,5 +1,6 @@
 <?php 
     include 'db.php';
+    include 'functions.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -22,15 +23,7 @@
         <select name="realty_type" required>
             <option value="">-- choose a realty type --</option>
             <?php 
-                $realty_types = mysqli_query($db, "SELECT * FROM realty_type ORDER BY name");
-                // currenty chosen realty 
-                $realty_type_id = $realty['realty_type_id'];
-                while($realty_type = mysqli_fetch_assoc($realty_types)) {
-                    $realty_type_id_temp = $realty_type['id'];
-                    $realty_type_name_temp = $realty_type['name'];
-
-                    echo "<option value='$realty_type_id_temp'>$realty_type_name_temp</option>";
-                }
+                    selectMenu("realty_type");
             ?>
             </option>
         </select>
@@ -42,15 +35,7 @@
         <select name="ad_type" id="" required>
             <option value="">-- choose the type of ad --</option>
             <?php
-                $ad_types = mysqli_query($db, "SELECT * FROM ad_type ORDER BY name");
-                // the id of the currently chosen ad type
-                $ad_type_id = $realty['ad_type_id'];
-                while ($ad_type = mysqli_fetch_assoc($ad_types)) {
-                    $ad_type_id_temp = $ad_type['id'];
-                    $ad_type_name_temp = $ad_type['name'];
-    
-                    echo "<option value='$ad_type_id_temp'>$ad_type_name_temp</option>";
-                }
+                selectMenu("ad_type");
             ?>
         </select>
 
@@ -61,15 +46,7 @@
         <select name="city_id" required>
             <option value="">-- choose a city --</option>
             <?php 
-                $cities = mysqli_query($db, "SELECT * from cities ORDER BY name"); 
-                // currenty chosen city 
-                $city_id = $realty['city_id'];
-                while ($city = mysqli_fetch_assoc($cities)) {
-                    $id_temp = $city['id'];
-                    $name_temp = $city['name'];
-        
-                    echo "<option value='$id_temp'>$name_temp</option>";
-                }
+                selectMenu("cities");
             ?>
         </select>
 

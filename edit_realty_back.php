@@ -2,6 +2,15 @@
     include 'db.php';
     include 'functions.php';
 
+    // if photos are deleted and the others added, then change the realty itself 
+    // add effects when the photo is marked for deletion
+    if (($_POST['del_photos'][0]) != "") {
+        $del_photos = json_decode(($_POST['del_photos'][0]));
+        foreach($del_photos as $photo_id) {
+            $delete_photo_res = mysqli_query($db, "DELETE FROM photos WHERE id = $photo_id");
+        }
+    }
+
     isset($_POST['id']) && is_numeric($_POST['id']) ? $id = $_POST['id'] : exit('ID not available.');
     isset($_POST['realty_type']) && is_numeric($_POST['realty_type']) ? $realty_type = $_POST['realty_type'] : $realty_type = "";
     isset($_POST['ad_type']) && is_numeric($_POST['ad_type']) ? $ad_type = $_POST['ad_type'] : $ad_type = "";
