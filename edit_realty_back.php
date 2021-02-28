@@ -2,11 +2,6 @@
     include 'db.php';
     include 'functions.php';
 
-    // var_dump($_POST);
-    // echo "<br>";
-    // echo "<br>";
-    // var_dump($_FILES);
-    // exit;
     $values = [];
 
     $id = validate($_POST, 'id', true, true, "", "index.php?msg=no_id");
@@ -20,7 +15,7 @@
     $values['description'] = validate($_POST, 'description', false, false, "", "index.php?edit_err7");
     $values['status'] = validate($_POST, 'status', true, true, "", "index.php?edit_err8");
     
-    if ($values['status'] == 0) {
+    if ($values['status'] == 1) {
         $date_of_sale = null;
      } else {
         $date_of_sale = validate($_POST, 'date_of_sale', false, false, "", "index.php?edit_err9");

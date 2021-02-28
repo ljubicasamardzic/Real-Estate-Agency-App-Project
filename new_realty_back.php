@@ -16,16 +16,12 @@
     // if the status is available, date of sale is automatically set to null
     // else it takes the relevant value from the post array 
 
-    if ($values['status'] == 0) {
+    if ($values['status'] == 1) {
         $date_of_sale = "";
         $date_col = ""; 
     }  else {
         $values['date_of_sale'] = $_POST['date_of_sale'];
     }
-
-
-    // var_dump($values);
-    // exit;
 
 mysqli_query($db, "BEGIN");
 

@@ -16,6 +16,7 @@ $res = mysqli_query($db, "SELECT * from realty_type group by name ASC");
     <title>Realty Types Register</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
 </head>
 
@@ -33,7 +34,7 @@ $res = mysqli_query($db, "SELECT * from realty_type group by name ASC");
             </div>
         </div>
         <div class="row mt-5 px-4">
-       
+
             <div class="col-5">
                 <div class="table-responsive padding-div">
                     <table class="table table-bordered table-hover">
@@ -53,7 +54,7 @@ $res = mysqli_query($db, "SELECT * from realty_type group by name ASC");
                                 $no++;
 
                                 $edit_realty_type = "<a href=\"edit_realty_type.php?id=$id\"><i class='fas fa-edit fa-lg'></a>";
-                                $del_realty_type = "<a href=\"del_realty_type.php?id=$id\"><i class='fa fa-times fa-lg'></a>";
+                                $del_realty_type = "<a onclick=\"showModal($id)\"><i class='fa fa-times fa-lg'></a>";
 
                                 echo "<tr>";
                                 echo "<td>" . $no . "</td>";
@@ -61,6 +62,28 @@ $res = mysqli_query($db, "SELECT * from realty_type group by name ASC");
                                 echo "<td>$edit_realty_type</td>";
                                 echo "<td>$del_realty_type</td>";
                                 echo "</tr>";
+
+                                // DELETION MODAL
+
+                                echo "<div id=\"modal_del$id\" class=\"modal\">";
+                                echo "<div class=\"modal-dialog modal-sm modal-dialog-centered\" role=\"document\">";
+                                echo "<div class=\"modal-content\">";
+                                echo "<div class=\"modal-header\">";
+                                echo "<h1 class=\"modal-title\">Delete</h1>";
+                                echo "<button type='button' class='close' onclick=\"closeModal($id);\">";
+                                echo "<span aria-hidden'true'><i class='fa fa-times'></i></span>";
+                                echo "</button>";
+                                echo "</div>";
+                                echo "<div class=\"modal-body\">";
+                                echo "<p>Are you sure you want to delete this realty type?</p>";
+                                echo "</div>";
+                                echo "<div class=\"modal-body\">";
+                                echo "<button type=\"button\" class=\"btn btn-modal btn-secondary btn-lg\" onclick=\"closeModal($id);\">Cancel</button>";
+                                echo "<a type=\"button\" class=\"btn btn-modal btn-danger-cust btn-lg\" href=\"del_realty_type.php?id=$id\">Delete</a>";
+                                echo "</div>";
+                                echo "</div>";
+                                echo "</div>";
+                                echo "</div>";
                             }
 
                             ?>
@@ -77,19 +100,27 @@ $res = mysqli_query($db, "SELECT * from realty_type group by name ASC");
                             <label for="realty_type">Add a New Realty Type:</label>
                         </div>
                         <div class="form-group mx-sm-3">
-                            <input type="text" name="realty_type" class="form-control">
+                            <input type="text" name="realty_type" class="form-control" required>
                         </div>
                     </div>
                     <button class="btn btn-primary btn-lg">Add</button>
                 </form>
             </div>
+
+
+
+
+
+
+
         </div>
     </div>
 
 
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <script src="app.js" type="text/javascript"></script>
 
 </body>
 

@@ -5,108 +5,13 @@ include 'functions.php';
 
 $search_arr = ["realties.ad_type_id = ad_type.id", "realties.realty_type_id = realty_type.id"];
 
-if (isset($_GET['realty_type']) && $_GET['realty_type'] != "") {
-    $realty_type_id = $_GET['realty_type'];
-    $search_arr[] = "realty_type_id = $realty_type_id";
-} else {
-    $realty_type_id = "";
-}
-
-if (isset($_GET['ad_type']) && $_GET['ad_type'] != "") {
-    $ad_type_id = $_GET['ad_type'];
-    $search_arr[] = "ad_type_id = $ad_type_id";
-} else {
-    $ad_type_id = "";
-}
-
-if (isset($_GET['city']) && $_GET['city'] != "") {
-    $city_id = $_GET['city'];
-    $search_arr[] = "city_id = $city_id";
-} else {
-    $city_id = "";
-}
-if (isset($_GET['min_price']) && $_GET['min_price'] != "" && isset($_GET['max_price']) && $_GET['max_price'] != "") {
-    $max_price = $_GET['max_price'];
-    $min_price = $_GET['min_price'];
-    $search_arr[] = "price BETWEEN $min_price AND $max_price";
-}
-if (isset($_GET['min_price']) && $_GET['min_price'] != "") {
-    $min_price = $_GET['min_price'];
-    $search_arr[] = "price >= $min_price";
-} else {
-    $min_price = "";
-}
-if (isset($_GET['max_price']) && $_GET['max_price'] != "") {
-    $max_price = $_GET['max_price'];
-    $search_arr[] = "price <= $max_price";
-} else {
-    $max_price = "";
-}
-if (isset($_GET['min_size']) && $_GET['min_size'] != "" && isset($_GET['max_size']) && $_GET['max_size'] != "") {
-    $min_size = $_GET['min_size'];
-    $max_size = $_GET['max_size'];
-    $search_arr[] = "size BETWEEN $min_size AND $max_size";
-}
-if (isset($_GET['min_size']) && $_GET['min_size'] != "") {
-    $min_size = $_GET['min_size'];
-    $search_arr[] = "size >= $min_size";
-} else {
-    $min_size = "";
-}
-if (isset($_GET['max_size']) && $_GET['max_size'] != "") {
-    $max_size = $_GET['max_size'];
-    $search_arr[] = "size <= $max_size";
-}  else {
-    $max_size = "";
-}
-if (isset($_GET['year_min']) && $_GET['year_min'] != "" && isset($_GET['year_max']) && $_GET['year_max'] != "") {
-    $year_min = $_GET['year_min'];
-    $year_max = $_GET['year_max'];
-    $search_arr[] = "year_of_construction BETWEEN $year_min AND $year_max";
-}
-if (isset($_GET['year_min']) && $_GET['year_min'] != "") {
-    $year_min = $_GET['year_min'];
-    $search_arr[] = "year_of_construction >= $year_min";
-} else {
-    $year_min = "";
-}
-if (isset($_GET['year_max']) && $_GET['year_max'] != "") {
-    $year_max = $_GET['year_max'];
-    $search_arr[] = "year_of_construction <= $year_max";
-} else {
-    $year_max = "";
-}
-if (isset($_GET['status']) && $_GET['status'] != "") {
-    $status = $_GET['status'];
-    $search_arr[] = "status = $status";
-} else {
-    $status = "";
-}
-if (isset($_GET['date_of_sale_min']) && $_GET['date_of_sale_min'] != "" && isset($_GET['date_of_sale_max']) && $_GET['date_of_sale_max'] != "") {
-    $date_of_sale_min = $_GET['date_of_sale_min'];
-    $date_of_sale_max = $_GET['date_of_sale_max'];
-    $search_arr[] = "date_of_sale BETWEEN '$date_of_sale_min' AND '$date_of_sale_max'";
-}
-if (isset($_GET['date_of_sale_min']) && $_GET['date_of_sale_min'] != "") {
-    $date_of_sale_min = $_GET['date_of_sale_min'];
-    $search_arr[] = "date_of_sale >= '$date_of_sale_min'";
-} else {
-    $date_of_sale_min = "";
-}
-if (isset($_GET['date_of_sale_max']) && $_GET['date_of_sale_max'] != "") {
-    $date_of_sale_max = $_GET['date_of_sale_max'];
-    $search_arr[] = "date_of_sale <= '$date_of_sale_max'";
-} else {
-    $date_of_sale_max = "";
-}
-
-$where_str = implode(" AND ", $search_arr);
+include 'filters.php';
 
 // track the page number
 (isset($_GET['pageno'])) ? $pageno = $_GET['pageno'] : $pageno = 1;
 
 // define how many records to show per page and adjust offset
-$num_of_realties_per_page = 1;
+$num_of_realties_per_page = 8;
 $offset = ($pageno - 1) * $num_of_realties_per_page;
 
 // first check how many records and how many pages there will be
@@ -153,6 +58,8 @@ $res = mysqli_query($db, $query);
     <title>Club Med Real Estate</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
 </head>
 
@@ -178,7 +85,7 @@ $res = mysqli_query($db, $query);
                         <select name="realty_type" class="form-control" id="realty_type_id">
                             <option value="">-- choose a realty type --</option>
                             <?php
-                                selectMenu("realty_type", $realty_type_id);
+                            selectMenu("realty_type", $realty_type_id);
                             ?>
                         </select>
                     </div>
@@ -189,7 +96,7 @@ $res = mysqli_query($db, $query);
                         <select name="ad_type" class="form-control" id="ad_type_id">
                             <option value="">-- choose an action --</option>
                             <?php
-                                selectMenu("ad_type", $ad_type_id);
+                            selectMenu("ad_type", $ad_type_id);
                             ?>
                         </select>
                     </div>
@@ -199,7 +106,7 @@ $res = mysqli_query($db, $query);
                         <select name="city" class="form-control" id="city_id">
                             <option value="">-- choose a city --</option>
                             <?php
-                                selectMenu("cities", $city_id);
+                            selectMenu("cities", $city_id);
                             ?>
                         </select>
                     </div>
@@ -208,11 +115,11 @@ $res = mysqli_query($db, $query);
                         <label for="min-price">Price Range (euro):</label>
                         <div class="form-row">
                             <div class="col">
-                                <input type="number" name="min_price" class="form-control" id="min_price_id" value=<?=$min_price?>>
+                                <input type="number" name="min_price" class="form-control" id="min_price_id" value=<?= $min_price ?>>
                             </div>
                             to
                             <div class="col">
-                                <input type="number" name="max_price" class="form-control" id="max_price_id" value=<?=$max_price?>>
+                                <input type="number" name="max_price" class="form-control" id="max_price_id" value=<?= $max_price ?>>
                             </div>
                         </div>
                     </div>
@@ -221,11 +128,11 @@ $res = mysqli_query($db, $query);
                         <label for="min_size">Realty Size (m2):</label>
                         <div class="form-row">
                             <div class="col">
-                                <input type="number" name="min_size" class="form-control" id="min_size_id" value=<?=$min_size?>>
+                                <input type="number" name="min_size" class="form-control" id="min_size_id" value=<?= $min_size ?>>
                             </div>
                             to
                             <div class="col">
-                                <input type="number" name="max_size" class="form-control" id="max_size_id" value=<?=$max_size?>>
+                                <input type="number" name="max_size" class="form-control" id="max_size_id" value=<?= $max_size ?>>
                             </div>
                         </div>
                     </div>
@@ -235,10 +142,10 @@ $res = mysqli_query($db, $query);
 
                         <div class="form-row">
                             <div class="col">
-                                <input type="number" name="year_min" class="form-control" id="year_min_id" value=<?=$year_min?>>
+                                <input type="number" name="year_min" class="form-control" id="year_min_id" value=<?= $year_min ?>>
                             </div> to
                             <div class="col">
-                                <input type="number" name="year_max" class="form-control" id="year_max_id" value=<?=$year_max?>>
+                                <input type="number" name="year_max" class="form-control" id="year_max_id" value=<?= $year_max ?>>
                             </div>
                         </div>
                     </div>
@@ -248,7 +155,7 @@ $res = mysqli_query($db, $query);
                         <select name="status" class="form-control" id="status_id">
                             <option value="">-- choose a status --</option>
                             <?php
-                                selectMenu("status", $status);
+                            selectMenu("status", $status);
                             ?>
                         </select>
                     </div>
@@ -258,11 +165,11 @@ $res = mysqli_query($db, $query);
                         <div class="form-row">
                             <div class="col-12">since</div>
                             <div class="col">
-                                <input type="date" name="date_of_sale_min" placeholder="from" class="form-control" value=<?=$date_of_sale_min?>>
+                                <input type="date" name="date_of_sale_min" placeholder="from" class="form-control" value=<?= $date_of_sale_min ?> id="date_min">
                             </div>
                             <div class="col-12">until</div>
                             <div class="col">
-                                <input type="date" name="date_of_sale_max" placeholder="to" class="form-control" value=<?=$date_of_sale_max?>> 
+                                <input type="date" name="date_of_sale_max" placeholder="to" class="form-control" value=<?= $date_of_sale_max ?> id="date_max">
                             </div>
                         </div>
                     </div>
@@ -272,18 +179,20 @@ $res = mysqli_query($db, $query);
             </div>
             <div class="col-9 px-0">
 
-            <?php
+                <?php
 
-            if ($realty_type_id = "" && $ad_type_id = "" && $city_id = "" 
-            && $min_price = "" && $max_price = "" && $min_size = "" && $max_size = "" 
-            && $year_min = "" && $year_max = "" && $status = "" && $date_of_sale_min = "" && $date_of_sale_max = "") {
-                $display = "none";
-            } else {
-                $display = "block";
-            }
-                
-            ?>
-                <div id="criteria-div" class="px-5" style="display: <?=$display?>;">
+                if (
+                    $realty_type_id == "" && $ad_type_id == "" && $city_id == "" && $min_price == "" && $max_price == "" && $min_size == ""
+                    && $max_size == "" && $year_min == "" && $year_max == "" && $status == "" && $date_of_sale_min == ""
+                    && $date_of_sale_max == ""
+                ) {
+                    $display = "none";
+                } else {
+                    $display = "block";
+                }
+
+                ?>
+                <div id="criteria-div" class="px-5" style="display: <?= $display ?>;">
                     <ul id="criteria-list">
                         <li><button class="btn btn-primary" id="clear_all">Clear All <i class="fas fa-times fa-lg"></i></button></li>
                     </ul>
@@ -309,14 +218,13 @@ $res = mysqli_query($db, $query);
                         </thead>
                         <tbody>
                             <?php
-                            $no = 0;
                             while ($row = mysqli_fetch_assoc($res)) {
 
                                 $id = $row['id'];
 
                                 $show_realty = "<a href=\"realty.php?id=$id\"><i class='fas fa-info-circle fa-lg'></i></a>";
                                 $edit_realty = "<a href=\"edit_realty.php?id=$id\"><i class='fas fa-edit fa-lg'></i></a>";
-                                $delete_realty = "<a href=\"delete_realty.php?id=$id\"><i class='fa fa-times fa-lg'></i></a>";
+                                $delete_realty = "<a onclick=\"showModal($id)\"><i class='fa fa-times fa-lg'></i></a>";
 
                                 echo "<tr>";
                                 echo "<td>" . $row["realty_type"] . "</td>";
@@ -332,6 +240,28 @@ $res = mysqli_query($db, $query);
                                 echo "<td>$edit_realty</td>";
                                 echo "<td>$delete_realty</td>";
                                 echo "</tr>";
+
+                                // DELETION MODAL
+
+                                echo "<div id=\"modal_del$id\" class=\"modal\">";
+                                echo "<div class=\"modal-dialog modal-sm modal-dialog-centered\" role=\"document\">";
+                                echo "<div class=\"modal-content\">";
+                                echo "<div class=\"modal-header\">";
+                                echo "<h1 class=\"modal-title\">Delete</h1>";
+                                echo "<button type='button' class='close' onclick=\"closeModal($id);\">";
+                                echo "<span aria-hidden'true'><i class='fa fa-times'></i></span>";
+                                echo "</button>";
+                                echo "</div>";
+                                echo "<div class=\"modal-body\">";
+                                echo "<p>Are you sure you want to delete this realty?</p>";
+                                echo "</div>";
+                                echo "<div class=\"modal-body\">";
+                                echo "<button type=\"button\" class=\"btn btn-modal btn-secondary btn-lg\" onclick=\"closeModal($id);\">Cancel</button>";
+                                echo "<a type=\"button\" class=\"btn btn-modal btn-danger-cust btn-lg\" href=\"delete_realty.php?id=$id\">Delete</a>";
+                                echo "</div>";
+                                echo "</div>";
+                                echo "</div>";
+                                echo "</div>";
                             }
 
                             ?>
@@ -343,7 +273,7 @@ $res = mysqli_query($db, $query);
                 echo "<p class='px-5'>Number of results: " . $total_rows . "</p>";
                 ?>
 
-                <!-- pagination -->
+                <!-- PAGINATION -->
                 <ul class="pagination justify-content-center">
                     <li class="page-item <?php if ($pageno <= 1) {
                                                 echo 'disabled';
@@ -371,17 +301,19 @@ $res = mysqli_query($db, $query);
                         <a href="<?php if ($pageno >= $total_pages) {
                                         echo "#";
                                     } else {
-                                        echo "?pageno=" . ($pageno + 1). "&realty_type=$realty_type_id&ad_type=$ad_type_id&city=$city_id&min_price=$min_price&max_price=$max_price&min_size=$min_size&max_size=$max_size&year_min=$year_min&year_max=$year_max&status=$status&date_of_sale_min=$date_of_sale_min&date_of_sale_max=$date_of_sale_max";
+                                        echo "?pageno=" . ($pageno + 1) . "&realty_type=$realty_type_id&ad_type=$ad_type_id&city=$city_id&min_price=$min_price&max_price=$max_price&min_size=$min_size&max_size=$max_size&year_min=$year_min&year_max=$year_max&status=$status&date_of_sale_min=$date_of_sale_min&date_of_sale_max=$date_of_sale_max";
                                     } ?>" class="page-link">Next</a>
                     </li>
                 </ul>
             </div>
-            <!-- closing tags for container and row -->
         </div>
     </div>
-  
-                                <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
-    <!-- <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script> -->
+
+    </div>
+    </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
     <script src="app.js" type="text/javascript"></script>

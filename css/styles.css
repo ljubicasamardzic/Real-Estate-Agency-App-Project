@@ -14,14 +14,8 @@ body {
     list-style-type: none;
     display: flex;
     flex-wrap: wrap;
-    /* white-space:nowrap; */
 }
-#criteria-list li {
-    /* display: inline; */
-    /* float: left; */
-    /* flex: auto; */
-    /* margin: 0 .5rem; */
-}
+
 #criteria-list li button {
    font-size: 1.4rem;
    margin: .3rem .2rem;
@@ -80,6 +74,20 @@ display: block;
     background-color: white;
     color: black;
 }
+.btn.btn-danger-cust {
+    background-color: #d9534f;
+    border: #d9534f;
+    color: white;
+}
+.btn.btn-danger-cust:hover {
+    background-color: #ca4f4b;
+    border: #ca4f4b;
+}
+.btn-modal {
+    float: left;
+    width: 50%;
+    border-radius: 0 !important;
+  }
 .link-div {
     display: inline-block;
 }
@@ -89,8 +97,11 @@ display: block;
     float: left;
 }
 .main-title {
-    font-size: 3.5rem;
+    font-size: 4.5rem;
     color: white;
+    font-family: 'Amatic SC';
+    font-weight: 400;
+    letter-spacing: 5px;
 }
 .blue-div {
     background-color: #106381;
@@ -107,3 +118,4 @@ display: block;
 .add-div {
     padding: 4rem;
 }
+

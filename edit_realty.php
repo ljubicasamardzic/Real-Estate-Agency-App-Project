@@ -32,6 +32,7 @@ $realty = mysqli_fetch_assoc($res);
     <title>Edit</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
 
 </head>
@@ -128,44 +129,48 @@ $realty = mysqli_fetch_assoc($res);
                 </div>
 
                 <?php
+                    $date = $realty['date_of_sale'];
 
-                $date = $realty['date_of_sale'];
+                    $status == 2 ? $display = "block" : $display = "none";
 
-                $status == 2 ? $display = "block" : $display = "none";
-
-                echo "<div id=\"date_of_sale\" class='form-group' style=\"display: $display;\">";
-                echo "<label for=\"date_of_sale\">Date of Sale: </label>";
-                echo "<input type=\"date\" name=\"date_of_sale\" value=$date class=\"form-control\">";
-                echo "</div>";
+                    echo "<div id=\"date_of_sale\" class='form-group' style=\"display: $display;\">";
+                    echo "<label for=\"date_of_sale\">Date of Sale: </label>";
+                    echo "<input type=\"date\" name=\"date_of_sale\" class=\"form-control\" value=$date>";
+                    echo "</div>";
                 ?>
 
                 <?php
-                $res2 = mysqli_query($db, "SELECT * FROM photos WHERE realty_id = $id");
+                    $res2 = mysqli_query($db, "SELECT * FROM photos WHERE realty_id = $id");
 
-                echo "<input type=\"hidden\" name=\"del_photos\" id=\"hidden_img\">";
-                echo "<p>Select Images to Delete:</p>";
+                    echo "<input type=\"hidden\" name=\"del_photos\" id=\"hidden_img\">";
+                    echo "<p>Select Images to Delete:</p>";
 
-                // List out all the photos
-                while ($photo = mysqli_fetch_assoc($res2)) {
-                    $photo_name = $photo['name'];
-                    $photo_id = $photo['id'];
-                    echo "<div class=\"img-wrapper mr-3 mb-5\">";
-                    echo "<img src=$photo_name height=150 width=200 id=$photo_id>";
-                    echo "<a>";
-                    echo "<div>";
-                    echo "<i onClick=\"removePhotos($photo_id)\" class=\"fas fa-times fa-lg\"></i>";
+                    echo "<div class='container-fluid'>";
+                    echo "<div class='row'>";
+                    // List out all the photos
+                    while ($photo = mysqli_fetch_assoc($res2)) {
+                        $photo_name = $photo['name'];
+                        $photo_id = $photo['id'];
+                        echo "<div class=\"img-wrapper mr-3 mb-5\" style='display: block'>";
+                        echo "<img src=$photo_name height=150 width=200 id=$photo_id>";
+                        echo "<a>";
+                        echo "<div>";
+                        echo "<i onClick=\"removePhotos($photo_id)\" class=\"fas fa-times fa-lg\"></i>";
+                        echo "</div>";
+                        echo "</a>";
+                        echo "</div>";
+                    }
                     echo "</div>";
-                    echo "</a>";
                     echo "</div>";
-                }
+
                 ?>
                 
-                <div class="form-group my-5">
+                <div class="form-group mb-5" style="display: block;">
                     <label for="photos">Select Images to Add:</label>
-                    <input type="file" name="photos[]" multiple class="form-control-files">
+                    <input type="file" name="photos[]" multiple class="form-control-file">
                 </div>
 
-                <button class="btn btn-primary btn-block">Update</button>
+                <button class="btn btn-primary btn-block mb-5">Update</button>
                 </form>
             </div>
         </div>

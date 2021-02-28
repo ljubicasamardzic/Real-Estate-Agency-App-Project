@@ -40,16 +40,23 @@ function removePhotos(id) {
     // the array is stringified so that more values could be placed within the input field
     img_arr.value = JSON.stringify(arr);
 
-    console.log(img_arr.value);
+    // console.log(img_arr.value);
 
 }
+
+
+// FILTERS 
+// filters were implemented using parameters from the url (params are exposed as part of the GET request)
+// ideally this should have been refactored to use selected data directly from the form
+// but due to some initial issues, the url params were used and later a lack of time prevented me from refactoring the code 
 
 // the element to which we add selected filters
 var ul = document.getElementById('criteria-list');
 
 // function to add filter buttons
 function addFilters(filter, btn_text = "", measure = "", select = false, select_el = "", id_parent="", id_self="") {
-    if (filter != "") {
+    if (filter != "" && filter != null) {
+        // for select elements we need to get the filter name first bc we get the id from the url
         if (select) {
             for (var i = 0; i < select_el.length; i++) {
                 var option = select_el.options[i];
@@ -63,6 +70,10 @@ function addFilters(filter, btn_text = "", measure = "", select = false, select_
         li.innerHTML = `<button class="btn btn-primary" id="${id_self}" value="${id_parent}">${btn_text}${filter}${measure} <i class="fas fa-times fa-lg"></i></button>`;
 
         ul.appendChild(li);
+
+        var criteriaDiv = document.getElementById('criteria-div');
+
+        criteriaDiv.style.display = "block";
 
         // set the event listened so that the filter gets deleted once clicked
         var btn = document.getElementById(id_self);
@@ -113,7 +124,6 @@ addFilters(city_id, "", "", true, city_slc, "city_id", "btn3");
 
 let status = urlParams.get('status');
 addFilters(status, "", "", true, status_slc, "status_id", "btn10");
-// a separate function because the options are a bit different than for the other filters
 
 const min_price = urlParams.get('min_price');
 addFilters(min_price, "Min Price: ", "€", false, "", "min_price_id", "btn4");
@@ -133,35 +143,11 @@ addFilters(year_min, "Constructed since: ", "", false, "", "year_min_id", "btn8"
 const year_max = urlParams.get('year_max');
 addFilters(year_max, "Constructed until: ", "", false, "", "year_max_id", "btn9");
 
-// if (status != "") {
-//     status == 0 ? status = "Available" : status = "Not available";
-// }
-
-function addFilterDate(date_min, date_max) {
-
-    if (date_min != "" || date_max != "") {
-        var li = document.createElement('li');
-
-        if (date_min != "" && date_max != "") {
-            var text1 = "Sold between: ";
-            var text2 = " and ";
-            // li.innerHTML = `<button class="btn btn-primary">Sold between: ${date_min} and ${date_max}<i class="fas fa-times fa-lg"></i></button>`;
-        } else if (date_max != "" && date_min == "") {
-            text1 = "Sold before: ";
-            text2 = "";
-        } else if (date_min != "" && date_max == "") {
-            text1 = "Sold after: ";
-            text2 = "";
-        }
-        li.innerHTML = `<button class="btn btn-primary">${text1}${date_min}${text2}${date_max}<i class="fas fa-times fa-lg"></i></button>`;
-        ul.appendChild(li);
-    }
-}
-
 const date_of_sale_min = urlParams.get('date_of_sale_min');
-const date_of_sale_max = urlParams.get('date_of_sale_max');
+addFilters(date_of_sale_min, "Sold after: ", "", "", "", "date_min", "btn11");
 
-addFilterDate(date_of_sale_min, date_of_sale_max);
+const date_of_sale_max = urlParams.get('date_of_sale_max');
+addFilters(date_of_sale_max, "Sold before: ", "", "", "", "date_max", "btn12");
 
 function clearSearchCriteria() {
     realty_type_slc.value = "";
@@ -181,3 +167,12 @@ function clearSearchCriteria() {
 }
 
 document.getElementById('clear_all').addEventListener('click', clearSearchCriteria);
+
+// MODAL 
+function showModal(id) {
+    document.getElementById('modal_del' + id).style.display='block';
+}
+
+function closeModal(id) {
+    document.getElementById('modal_del' + id).style.display = "none";
+}

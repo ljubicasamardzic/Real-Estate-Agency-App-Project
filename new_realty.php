@@ -12,6 +12,7 @@ include 'functions.php';
     <title>Add a New Realty</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
 </head>
 
@@ -91,8 +92,9 @@ include 'functions.php';
         otherwise the user is prevented from meddling with the date -->
                     <select id="status" name="status" onchange="addSaleDate(this)" required class="form-control">
                         <option value="">-- choose the realty status --</option>
-                        <option value=0>Available</option>
-                        <option value=1>Not available</option>
+                            <?php
+                            selectMenu("status");
+                            ?>
                     </select>
                 </div>
 
