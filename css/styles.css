@@ -1,0 +1,109 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+html{
+    height: 100%;
+    font-size: 10px;
+}
+body {
+    font-size: 1.6rem;
+}
+
+#criteria-list {
+    list-style-type: none;
+    display: flex;
+    flex-wrap: wrap;
+    /* white-space:nowrap; */
+}
+#criteria-list li {
+    /* display: inline; */
+    /* float: left; */
+    /* flex: auto; */
+    /* margin: 0 .5rem; */
+}
+#criteria-list li button {
+   font-size: 1.4rem;
+   margin: .3rem .2rem;
+}
+#criteria-list li button i {
+    padding: 0 .5rem;
+}
+
+.img-wrapper {
+    position: relative;
+    float: left
+}
+
+.img-wrapper a {
+position: absolute;
+right: 0;
+top: 0;
+display: none;
+padding: 3%;
+}
+
+.img-wrapper:hover a {
+display: block;
+}
+
+.transform {
+    opacity: 0.6;
+    transform: scale(0.8);
+}
+
+#header-div {
+    height: 35vh;
+    background-image: url("../img.png");
+    background-size: contain;
+    padding: 2rem;
+}
+#search-bar {
+    padding: 3rem 3% 0;
+    background-color: #343a40;
+    color: white;
+}
+.form-control {
+    font-size: 1.5rem;
+}
+.btn {
+    font-size: 1.5rem;
+    background-color: #106381;
+    border: #106381;
+}
+.btn:hover,
+.btn.btn-primary:hover, 
+.btn.btn-custom:hover {
+    background-color: #2386aa;
+}
+.btn.btn-custom {
+    background-color: white;
+    color: black;
+}
+.link-div {
+    display: inline-block;
+}
+
+.link-group {
+    width: 15vw;
+    float: left;
+}
+.main-title {
+    font-size: 3.5rem;
+    color: white;
+}
+.blue-div {
+    background-color: #106381;
+    color: white;
+    height: 6rem
+}
+.page-item.active .page-link {
+    background-color: #106381;
+    border-color: #106381;
+}
+.fas.fa-info-circle, .fas.fa-edit, .fa.fa-times, .page-link {
+    color: #106381;
+}
+.add-div {
+    padding: 4rem;
+}

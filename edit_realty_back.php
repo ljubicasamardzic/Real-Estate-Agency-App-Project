@@ -2,116 +2,129 @@
     include 'db.php';
     include 'functions.php';
 
-    // if photos are deleted and the others added, then change the realty itself 
-    // add effects when the photo is marked for deletion
-    if (($_POST['del_photos'][0]) != "") {
-        $del_photos = json_decode(($_POST['del_photos'][0]));
-        foreach($del_photos as $photo_id) {
-            $delete_photo_res = mysqli_query($db, "DELETE FROM photos WHERE id = $photo_id");
-        }
-    }
+    // var_dump($_POST);
+    // echo "<br>";
+    // echo "<br>";
+    // var_dump($_FILES);
+    // exit;
+    $values = [];
 
-    isset($_POST['id']) && is_numeric($_POST['id']) ? $id = $_POST['id'] : exit('ID not available.');
-    isset($_POST['realty_type']) && is_numeric($_POST['realty_type']) ? $realty_type = $_POST['realty_type'] : $realty_type = "";
-    isset($_POST['ad_type']) && is_numeric($_POST['ad_type']) ? $ad_type = $_POST['ad_type'] : $ad_type = "";
-    isset($_POST['city_id']) && is_numeric($_POST['city_id']) ? $city_id = $_POST['city_id'] : $city_id = "";
-    isset($_POST['size']) && is_numeric($_POST['size']) ? $size = $_POST['size'] : $size = "";
-    isset($_POST['price']) && is_numeric($_POST['price']) ? $price = $_POST['price'] : $price = "";
-    isset($_POST['year_of_construction']) && is_numeric($_POST['year_of_construction']) ? $year_of_construction = $_POST['year_of_construction'] : $year_of_construction = "";
-    isset($_POST['description']) ? $description = $_POST['description'] : $description = "";
-    isset($_POST['status']) && is_numeric($_POST['status']) ? $status = $_POST['status'] : $status = "";
-    isset($_POST['date_of_sale']) ? $date_of_sale = $_POST['date_of_sale'] : $date_of_sale = "";
+    $id = validate($_POST, 'id', true, true, "", "index.php?msg=no_id");
 
-    $status == 0 ? $date_of_sale = null : $date_of_sale = $_POST['date_of_sale'];
-
-    if ($date_of_sale != null) {
-        $update_query = "UPDATE realties SET
-        realty_type_id = $realty_type,
-        ad_type_id = $ad_type, 
-        city_id = $city_id,
-        size = $size,
-        price = $price,
-        year_of_construction = $year_of_construction,
-        description = '$description',
-        status = $status,
-        date_of_sale = '$date_of_sale'
-        WHERE id = $id
-        ";
-    } else {
-        $update_query = "UPDATE realties SET
-        realty_type_id = $realty_type,
-        ad_type_id = $ad_type, 
-        city_id = $city_id,
-        size = $size,
-        price = $price,
-        year_of_construction = $year_of_construction,
-        description = '$description',
-        status = $status,
-        date_of_sale = NULL        
-        WHERE id = $id
-        ";
-    }
+    $values['realty_type_id'] = validate($_POST, 'realty_type', true, true, "", "index.php?edit_err1");
+    $values['ad_type_id'] = validate($_POST, 'ad_type', true, true, "", "index.php?edit_err2");
+    $values['city_id'] = validate($_POST, 'city_id', true, true, "", "index.php?edit_err3");
+    $values['size'] = validate($_POST, 'size', true, true, "", "index.php?edit_err4");
+    $values['price'] = validate($_POST, 'price', true, true, "", "index.php?edit_err5");
+    $values['year_of_construction'] = validate($_POST, 'year_of_construction', true, true, "", "index.php?edit_err6");
+    $values['description'] = validate($_POST, 'description', false, false, "", "index.php?edit_err7");
+    $values['status'] = validate($_POST, 'status', true, true, "", "index.php?edit_err8");
+    
+    if ($values['status'] == 0) {
+        $date_of_sale = null;
+     } else {
+        $date_of_sale = validate($_POST, 'date_of_sale', false, false, "", "index.php?edit_err9");
+     }
 
     mysqli_query($db, "BEGIN");
 
-    $res_update = mysqli_query($db, $update_query);
-
-    if ($res_update) {
-
-        $photos_arr = $_FILES['photos']['name'];
+    // CASE 1: PHOTOS ARE DELETED AND NEW ADDED 
+    if (($_POST['del_photos']) != "" && $_FILES['photos']['name'][0] != "") {
         
-        if ($photos_arr[0] != "") {
-            
-            // temporary path
-            $temp_path_arr = $_FILES['photos']['tmp_name'];
+        // DEAL WITH DELETED PHOTOS
+        if (!deletePhotos('del_photos')) {       
+            mysqli_query($db, "ROLLBACK");
+            redirect("index.php?msg=err_edit_1");
+        }
 
-            $new_photos = [];
-            $allowedTypes = ['jpg', 'jpeg', 'png'];
-
-            foreach ($photos_arr as $key=>$photo_name) {
-                $temp_arr = explode(".", $photo_name);
-                $ext = $temp_arr[count($temp_arr)-1];
-
-                // checking that the file extension is valid 
-                if (in_array($ext, $allowedTypes)) {
-                    // new permanent path
-                $new_file_name = "./images/".uniqid().".".$ext;
-
-                copy($temp_path_arr[$key], $new_file_name);
-
-                // adding it to an array
-                $new_photos[] = $new_file_name;
-                } else {
-                    mysqli_query($db, "ROLLBACK");
-                    exit("No valid file type. Try again.");
-                }
-                
-            }
-
-            foreach ($new_photos as $photo) {
-
-                $update_query_img = "INSERT INTO `photos`(`realty_id`, `name`)  VALUES ($id, '$photo')";
-                $photo_update = mysqli_query($db, $update_query_img);
-                // add a check of if it went well or not
-                if ($photo_update) {
-                    continue;
-                } else {
-                    mysqli_query($db, "ROLLBACK");
-                    redirect("index.php?msg=photo_not_updated");
-                }
-            } 
-
-            mysqli_query($db, "COMMIT"); 
-            redirect("index.php?msg=realty_updated");
-        
+        // DEAL WITH NEWLY ADDED PHOTOS
+        if (checkPhotoType('photos')) {
+            $new_photos = checkPhotoType('photos');
         } else {
-            mysqli_query($db, "COMMIT"); 
-            redirect("index.php?msg=realty_updated");
+            mysqli_query($db, "ROLLBACK");
+            redirect("index.php?msg=wrong_file_format_1");
+        }
+    
+        foreach ($new_photos as $photo) {
+            $photo_update = insert("photos", ['realty_id' => $id, 'name' => $photo]);
+            if (!$photo_update) {
+                mysqli_query($db, "ROLLBACK");
+                redirect("index.php?msg=photo_not_updated1");
+            }
         }
         
-    } else {
-        mysqli_query($db, "ROLLBACK"); 
-        redirect("index.php?msg=realty_not_updated");
-    }  
+        // UPDATE OTHER PARAMETERS
+        $res_update = update('realties', $values, $id, $date_of_sale);
+
+        if ($res_update) { 
+            mysqli_query($db, "COMMIT"); 
+            redirect("index.php?msg=realty_updated");
+        } else {
+            mysqli_query($db, "ROLLBACK");
+            redirect("index.php?msg=realty_not_updated");
+        }
+
+        // CASE 2: SOME PHOTOS ARE DELETED, BUT NO NEW ADDED 
+    } else if (($_POST['del_photos']) != "" && $_FILES['photos']['name'][0] == "") {
+
+        if (!deletePhotos('del_photos')) {       
+            mysqli_query($db, "ROLLBACK");
+            redirect("index.php?msg=err_edit_1");
+        } 
+
+         // UPDATE OTHER PARAMETERS
+         $res_update = update('realties', $values, $id, $date_of_sale);
+
+        if ($res_update) { 
+            mysqli_query($db, "COMMIT"); 
+            redirect("index.php?msg=realty_updated");
+        } else {
+            mysqli_query($db, "ROLLBACK");
+            redirect("index.php?msg=realty_not_updated");
+        }
+        // CASE 3: NEW PHOTOS ARE ADDED, OLD ONES ARE NOT DELETED
+    } else if (($_POST['del_photos']) == "" && $_FILES['photos']['name'][0] != "") {
+
+             // DEAL WITH NEWLY ADDED PHOTOS
+             if (checkPhotoType('photos')) {
+                $new_photos = checkPhotoType('photos');
+            } else {
+                mysqli_query($db, "ROLLBACK");
+                redirect("index.php?msg=wrong_file_2");
+            }
+        
+            foreach ($new_photos as $photo) {
+                $photo_update = insert("photos", ['realty_id' => $id, 'name' => $photo]);
+                if (!$photo_update) {
+                    mysqli_query($db, "ROLLBACK");
+                    redirect("index.php?msg=photo_not_updated2");
+                }
+            }
+
+            // UPDATE OTHER PARAMETERS
+            $res_update = update('realties', $values, $id, $date_of_sale);
+    
+            if ($res_update) { 
+                mysqli_query($db, "COMMIT"); 
+                redirect("index.php?msg=realty_updated");
+            } else {
+                mysqli_query($db, "ROLLBACK");
+                redirect("index.php?msg=realty_not_updated");
+            }
+        // CASE 4: NO PHOTOS ARE ADDED OR DELETED
+    } else if (($_POST['del_photos']) == "" && $_FILES['photos']['name'][0] == "") {
+
+        $res_update = update('realties', $values, $id, $date_of_sale);
+
+        if ($res_update) { 
+            mysqli_query($db, "COMMIT"); 
+            redirect("index.php?msg=realty_updated");
+        } else {
+            mysqli_query($db, "ROLLBACK");
+            redirect("index.php?msg=realty_not_updated");
+        }
+
+
+    }
 
 ?>

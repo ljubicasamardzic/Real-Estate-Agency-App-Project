@@ -2,128 +2,70 @@
     include 'db.php';
     include 'functions.php';
 
-    // var_dump($_POST);
-    // exit;
+    $values = [];
 
-    isset($_POST['realty_type']) && is_numeric($_POST['realty_type']) ? $realty_type = $_POST['realty_type'] : $realty_type = "";
-    isset($_POST['ad_type']) && is_numeric($_POST['ad_type']) ? $ad_type = $_POST['ad_type'] : $ad_type = "";
-    isset($_POST['city_id']) && is_numeric($_POST['city_id']) ? $city_id = $_POST['city_id'] : $city_id = "";
-    isset($_POST['size']) && is_numeric($_POST['size']) ? $size = $_POST['size'] : $size = "";
-    isset($_POST['price']) && is_numeric($_POST['price']) ? $price = $_POST['price'] : $price = "";
-    isset($_POST['year_of_construction']) && is_numeric($_POST['year_of_construction']) ? $year_of_construction = $_POST['year_of_construction'] : $year_of_construction = "";
-    isset($_POST['description']) ? $description = $_POST['description'] : $description = "";
-    isset($_POST['status']) && is_numeric($_POST['status']) ? $status = $_POST['status'] : $status = "";
+    $values['realty_type_id'] = validate($_POST, 'realty_type', true, true, "", "index.php?msg=not_added_err1");
+    $values['ad_type_id'] = validate($_POST, 'ad_type', true, true, "", "index.php?msg=not_added_err2");
+    $values['city_id'] = validate($_POST, 'city_id', true, true, "", "index.php?msg=not_added_err3");
+    $values['size'] = validate($_POST, 'size', true, true, "", "index.php?msg=not_added_err4");
+    $values['price'] = validate($_POST, 'price', true, true, "", "index.php?msg=not_added_err5");
+    $values['year_of_construction'] = validate($_POST, 'year_of_construction', true, true, "", "index.php?msg=not_added_err6");
+    $values['description'] = validate($_POST, 'description', false, false, "", "index.php?msg=not_added_err7");
+    $values['status'] = validate($_POST, 'status', true, true, "", "index.php?msg=not_added_err8");
 
     // if the status is available, date of sale is automatically set to null
     // else it takes the relevant value from the post array 
 
-    if ($status == 0) {
+    if ($values['status'] == 0) {
         $date_of_sale = "";
         $date_col = ""; 
     }  else {
-        $date_of_sale = ",'".$_POST['date_of_sale']."'";
-        $date_col = ",date_of_sale"; 
+        $values['date_of_sale'] = $_POST['date_of_sale'];
     }
-    // var_dump($date_of_sale);
+
+
+    // var_dump($values);
     // exit;
 
-        $add_query = "INSERT INTO realties 
-                                    (
-                                        realty_type_id,
-                                        ad_type_id,   
-                                        city_id,
-                                        size,
-                                        price,
-                                        year_of_construction,
-                                        description, 
-                                        status
-                                        $date_col
-                                    )
-                                    VALUES
-                                    (
-                                        $realty_type,
-                                        $ad_type,
-                                        $city_id,
-                                        $size,
-                                        $price,
-                                        $year_of_construction,
-                                        '$description',
-                                        $status
-                                        $date_of_sale
-                                    )
-        ";
-    
-    // var_dump($add_query);
-    // exit;
-    
-    mysqli_query($db, "BEGIN");
+mysqli_query($db, "BEGIN");
 
-    $res_add = mysqli_query($db, $add_query);
+$res_add = insert("realties", $values);
 
-    // do if the realty has been successfully added
-    if ($res_add) {
+// do if the realty has been successfully added
+if ($res_add) {
 
-        // ADDING PHOTOS
+    // ADDING PHOTOS
 
-        // Names of the chosen photos
-        $photos_arr = $_FILES['photos']['name'];
-
-        // Temporary path
-        $temp_path_arr = $_FILES['photos']['tmp_name'];
-
-        $new_photos = [];
-        $allowedTypes = ['jpg', 'jpeg', 'png'];
-
-        foreach ($photos_arr as $key=>$photo_name) {
-            $temp_arr = explode(".", $photo_name);
-            $ext = $temp_arr[count($temp_arr)-1];
-
-            // checking that the file extension is valid 
-            if (in_array($ext, $allowedTypes)) {
-            // new permanent path
-            $new_file_name = "./images/".uniqid().".".$ext;
-
-            copy($temp_path_arr[$key], $new_file_name);
-
-            // adding it to an array
-            $new_photos[] = $new_file_name;
-            } else {
-                mysqli_query($db, "ROLLBACK");
-                exit("You must add at least one photo of type JPG, JPEG or PNG. Please try again.");
-
-                // header("location: index.php");
-            }
-            
-        }
-
-        $new_id = maxId('realties');
-
-        // add photos one by one
-        foreach ($new_photos as $photo) {
-            global $new_id;
-            $add_query_img = "INSERT INTO `photos`(`realty_id`, `name`)  VALUES ($new_id, '$photo')";
-
-            // var_dump($add_query_img);
-            // exit;
-            $photo_add = mysqli_query($db, $add_query_img);
-            // add a check of if it went well or not
-            if ($photo_add) {
-                continue;
-            } else {
-                mysqli_query($db, "ROLLBACK");
-                exit("Error with photo upload");
-            }
-        }
-
-        mysqli_query($db, "COMMIT");
-        redirect("index.php?msg=success_realty_added");
-
-    // rollback if the realty was not successfully added 
+    // check if the file extension is appropriate 
+    if (checkPhotoType('photos')) {
+        $new_photos = checkPhotoType('photos');
     } else {
         mysqli_query($db, "ROLLBACK");
-        redirect("index.php?msg=unsuccessfully_added_realty");
+        redirect("index.php?msg=wrong_file_format_1");
+    }
+   
+    // find the latest realty id
+    $new_id = maxId('realties');
+  
+    // add photos one by one
+    foreach ($new_photos as $photo) {
+       
+        $photo_add = insert("photos", ['realty_id' => $new_id, 'name' => $photo]);
+
+        // rollback in case of error
+        if (!$photo_add) {
+            mysqli_query($db, "ROLLBACK");
+            exit("Error with photo upload");
+        }
     }
 
-   
+    mysqli_query($db, "COMMIT");
+    redirect("index.php?msg=success_realty_added");
+
+// rollback if the realty was not successfully added 
+} else {
+    mysqli_query($db, "ROLLBACK");
+    redirect("index.php?msg=unsuccessfully_added_realty");
+}
 
 ?>
