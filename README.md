@@ -1,2 +1,2 @@
 # Real-Estate-Agency-App-Project
-Homework done at the Amplitudo Academy Web Development Course
+Homework - Amplitudo Academy Web Development Course 2021
